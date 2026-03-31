@@ -1,0 +1,28 @@
+{
+  "name": "ssaatt-2526-be",
+  "version": "1.0.0",
+  "description": "Código de inicio de la Fase 3 del proyecto de la asignatura SSAATT",
+  "keywords": [
+    "node.js",
+    "express",
+    "mongodb"
+  ],
+  "homepage": "https://github.com/jccuevas/SSAATT-2526-BE#readme",
+  "bugs": {
+    "url": "https://github.com/jccuevas/SSAATT-2526-BE/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jccuevas/SSAATT-2526-BE.git"
+  },
+  "license": "ISC",
+  "author": "Juan Carlos Cuevas Martínez",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
