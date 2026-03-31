@@ -98,6 +98,43 @@ app.post("/users", function (req, res) {
   });
 });
 
+
+/**
+ * Tarea 4.2 Servicio POST /users
+ * Inserta los datos de un usuario recibidos en la petición en formato JSON
+ * en la base de datos, si su nombre de usuario no existe ya
+ */
+app.get("/users", function (req, res) {
+
+  const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
+  // El objeto client es el que se emplea para interactuar
+  // con la base de datos.
+  // No olvide cerrar la conexión al finalizar este endpoint
+  // Para trabajar con la base de datos MongoDB es habitual definir una función asíncrona y lanzarla
+  async function run() {
+    try {
+      const db = client.db(DB_NAME);
+      const users = db.collection(DB_USERS_COLLECTION);
+
+      const cursor = await users.find(); // La función find busca todos los documentos de la colección que coincidan con el filtro.
+      // En este caso el filtro está vacío y por lo tanto extrae todos los documentos.
+      // find() devuelve un cursor que permite manejar el resultado de muchas formas.
+      const result = await cursor.toArray(); // Extraemos todos los documentos como un array JSON.
+      res.json(result); // Permite responder automáticamente con estado 200 y datos en JSON.
+
+    } finally {
+      await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
+    }
+  }
+
+  //Se lanza la función asíncrona run() y se capturan los errores (excepciones) con el método catch.
+  run().catch((ex) => {
+    console.error("[SERVIDOR] GET /users: " + ex.toString());
+    res.status(STATUS_SERVER_ERROR).end();
+  });
+});
+
+
 // Último endpoint por defecto por si la petición no está en el API REST - Error 404
 app.use((req, res) => {
   res.status(404).end();
