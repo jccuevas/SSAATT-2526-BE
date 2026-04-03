@@ -231,6 +231,64 @@ app.get("/users", function (req, res) {
   });
 });
 */
+
+/**
+ * Tarea 4.6 Servicio DELETE /users/:id
+ * Elimina un usuario específico almacenado en la base de datos
+ * El id del usuario a eliminar se especifica en la ruta del endpoint Express con "dos puntos", en este caso :id,
+ * y se recibe como un parámetro de la ruta (req.params.id) y se emplea para buscar el documento con ese id en la base de datos.
+ */
+app.delete("/users/:id", function (req, res) {
+  const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
+  // El objeto client es el que se emplea para interactuar
+  // con la base de datos.
+  // No olvide cerrar la conexión al finalizar este endpoint
+  // Para trabajar con la base de datos MongoDB es habitual definir una función asíncrona y lanzarla
+  async function run() {
+    try {
+      const db = client.db(DB_NAME);
+      const users = db.collection(DB_USERS_COLLECTION);
+
+      const id = new ObjectId(req.params.id); // Se extrae el id del usuario a buscar de los parámetros de la ruta
+
+      const result = await users.deleteOne({ _id: id }); // La función deleteOne elimina el documento con el id especificado
+      // En este caso el filtro tiene un valor y por lo tanto extrae solo el documento que coincide.
+      if (result.acknowledged && result.deletedCount === 1) {
+        res.status(200).end(); // El documento se ha eliminado correctamente
+      } else {
+        res.status(STATUS_NOTFOUND).end(); // Si no se encuentra el usuario se responde con un error 404 not found
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === "BSONError") {
+        console.error("[SERVIDOR] Error en el formato del id: " + error);
+        res.status(STATUS_BADFORMAT).json({
+          message: "Formato de id inválido",
+          error: error.message,
+        });
+      } else {
+        // Nota sobre seguridad: En un entorno de producción no se deberían mostrar los mensajes de error internos del servidor a los clientes,
+        // ya que pueden contener información sensible.
+        // En este caso se muestra el mensaje de error para facilitar la depuración durante el desarrollo,
+        // pero en un entorno de producción se debería responder con un mensaje genérico sin detalles del error interno.
+        console.error("[SERVIDOR] GET /users/:id: " + error);
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ message: "Error del servidor", error: error.message });
+      }
+    } finally {
+      await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
+    }
+  }
+
+  //Se lanza la función asíncrona run() y se capturan los errores (excepciones) con el método catch.
+  run().catch((ex) => {
+    console.error("[SERVIDOR] GET /users: " + ex.toString());
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error del servidor", error: error.message });
+  });
+});
+
 // Último endpoint por defecto por si la petición no está en el API REST - Error 404
 app.use((req, res) => {
   res.status(404).end();
