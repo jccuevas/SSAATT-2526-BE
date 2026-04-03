@@ -9,9 +9,9 @@
  * AUTOR: Juan Carlos Cuevas Martínez
  */
 
-// Datos del servicio 
-const VERSION = '1.0'; // Variable para indicar la versión del servicio
-const SERVICE_NAME = 'Nombre del servicio'; // Reemplazar por el nombre del servicio de cada equipo
+// Datos del servicio
+const VERSION = "1.0"; // Variable para indicar la versión del servicio
+const SERVICE_NAME = "Nombre del servicio"; // Reemplazar por el nombre del servicio de cada equipo
 const SERVICE_PORT = 8081; // Puerto para el servicio HTTP
 
 // Definición de códigos de estado que emplea la aplicación
@@ -24,34 +24,31 @@ const STATUS_FORBIDDEN = 403;
 const STATUS_SERVER_ERROR = 500;
 
 /* Módulos de Nonde.js para desplegar el servidor */
-const os = require('node:os'); // Módulo de información relativa al sistema operativo y el host
-const dns = require('node:dns'); // Módulo para emplear el servicio DNS
+const os = require("node:os"); // Módulo de información relativa al sistema operativo y el host
+const dns = require("node:dns"); // Módulo para emplear el servicio DNS
 
-const express = require('express'); //Importación del paquete Express
+const express = require("express"); //Importación del paquete Express
 
 const app = new express(); // Creación de la aplicación Express
 
-app.use(express.json()) // Para procesar tipos de datos application/json. 
-// Esto permite que en el objeto Request (req) se pueda emplear la propiedad req.body para 
+app.use(express.json()); // Para procesar tipos de datos application/json.
+// Esto permite que en el objeto Request (req) se pueda emplear la propiedad req.body para
 // acceder a cada propiedad del cuerpo de la petición por su nombre.
 
-const { MongoClient } = require("mongodb"); // Se importa MongoClient del paquete mongodb
+const { MongoClient, ObjectId } = require("mongodb"); // Se importa MongoClient del paquete mongodb
 
 // Definición de las constantes de la base de datos
 const DB_URL = "mongodb://localhost:27017/"; //URL de la base de datos local MongoDB
 const DB_NAME = "ssaatt"; // Puede cambiar el nombre al que desee y que mejor defina yo proyecto
 const DB_USERS_COLLECTION = "users"; // Ponga el nombre de las colecciones MongoDB en plural.
 
-
-
 //Primer endpoint - Punto de entrada genérico al servidor para guardar registro de las peticiones entrantes
 app.use((req, res, next) => {
-  console.log('[SERVIDOR] Petición entrante:' + req.method + ' ' + req.path);
-  next();//Hace que se pase el proceso al siguiente endpoint que coincida
+  console.log("[SERVIDOR] Petición entrante:" + req.method + " " + req.path);
+  next(); //Hace que se pase el proceso al siguiente endpoint que coincida
 });
 
 // API del servicio
-
 
 /**
  * Tarea 4.2 Servicio POST /users
@@ -77,13 +74,15 @@ app.post("/users", function (req, res) {
       if (buscado !== 0) {
         //Usuario que ya existe
         console.log(
-          `[SERVIDOR] El usuario ${req.body.user} ya existe en la base de datos`
+          `[SERVIDOR] El usuario ${req.body.user} ya existe en la base de datos`,
         );
         res.status(STATUS_FORBIDDEN).end(); //Se responde con el código 403 forbidden
       } else {
         //El usuario a introducir no existe, por lo tanto se insertará
         const result = await users.insertOne(req.body); //Se insertan los datos del nuevo usuario en la colección
-        console.log(`[SERVIDOR] Documento insertado con _id: ${result.insertedId}`);
+        console.log(
+          `[SERVIDOR] Documento insertado con _id: ${result.insertedId}`,
+        );
         res.json({ _id: result.insertedId }); // Permite responder automáticamente con estado 200 y datos en JSON.
       }
     } finally {
@@ -98,14 +97,12 @@ app.post("/users", function (req, res) {
   });
 });
 
-
 /**
- * Tarea 4.2 Servicio POST /users
- * Inserta los datos de un usuario recibidos en la petición en formato JSON
- * en la base de datos, si su nombre de usuario no existe ya
+ * Tarea 4.3 Servicio GET /users
+ * Recupera los datos de todos los usuarios almacenados en la base de datos
  */
+/* COMENTAR ESTA TAREA CUANDO SE VAYA A TRABAJAR EN LA TAREA 4.5, YA QUE SE EMPLEARÁ ESTE MISMO ENDPOINT PARA IMPLEMENTAR LOS FILTROS POR PARÁMETROS DE CONSULTA */
 app.get("/users", function (req, res) {
-
   const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
   // El objeto client es el que se emplea para interactuar
   // con la base de datos.
@@ -121,7 +118,6 @@ app.get("/users", function (req, res) {
       // find() devuelve un cursor que permite manejar el resultado de muchas formas.
       const result = await cursor.toArray(); // Extraemos todos los documentos como un array JSON.
       res.json(result); // Permite responder automáticamente con estado 200 y datos en JSON.
-
     } finally {
       await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
     }
@@ -134,27 +130,129 @@ app.get("/users", function (req, res) {
   });
 });
 
+/**
+ * Tarea 4.4 Servicio GET /users/:id
+ * Recupera los datos de un usuario específico almacenado en la base de datos
+ * El id del usuario a recuperar se especifica en la ruta del endpoint Express con "dos puntos", en este caso :id,
+ * y se recibe como un parámetro de la ruta (req.params.id) y se emplea para buscar el documento con ese id en la base de datos.
+ */
+app.get("/users/:id", function (req, res) {
+  const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
+  // El objeto client es el que se emplea para interactuar
+  // con la base de datos.
+  // No olvide cerrar la conexión al finalizar este endpoint
+  // Para trabajar con la base de datos MongoDB es habitual definir una función asíncrona y lanzarla
+  async function run() {
+    try {
+      const db = client.db(DB_NAME);
+      const users = db.collection(DB_USERS_COLLECTION);
 
+      const id = new ObjectId(req.params.id); // Se extrae el id del usuario a buscar de los parámetros de la ruta
+
+      const result = await users.findOne({ _id: id }); // La función find busca el documento con el id especificado
+      // En este caso el filtro tiene un valor y por lo tanto extrae solo el documento que coincide.
+      if (result) {
+        res.json(result); // Permite responder automáticamente con estado 200 y datos en JSON.
+      } else {
+        res.status(STATUS_NOTFOUND).end(); // Si no se encuentra el usuario se responde con un error 404 not found
+      }
+    } catch (error) {
+      if (error instanceof Error && error.name === "BSONError") {
+        console.error("[SERVIDOR] Error en el formato del id: " + error);
+        res.status(STATUS_BADFORMAT).json({
+          message: "Formato de id inválido",
+          error: error.message,
+        });
+      } else {
+        // Nota sobre seguridad: En un entorno de producción no se deberían mostrar los mensajes de error internos del servidor a los clientes,
+        // ya que pueden contener información sensible.
+        // En este caso se muestra el mensaje de error para facilitar la depuración durante el desarrollo,
+        // pero en un entorno de producción se debería responder con un mensaje genérico sin detalles del error interno.
+        console.error("[SERVIDOR] GET /users/:id: " + error);
+        res
+          .status(STATUS_SERVER_ERROR)
+          .json({ message: "Error del servidor", error: error.message });
+      }
+    } finally {
+      await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
+    }
+  }
+
+  //Se lanza la función asíncrona run() y se capturan los errores (excepciones) con el método catch.
+  run().catch((ex) => {
+    console.error("[SERVIDOR] GET /users: " + ex.toString());
+    res
+      .status(STATUS_SERVER_ERROR)
+      .json({ message: "Error del servidor", error: error.message });
+  });
+});
+
+/**
+ * Tarea 4.5 Servicio GET /users con algunos parámetros de consulta (query parameters) para filtrar los resultados
+ * Recupera los datos de todos los usuarios almacenados en la base de datos en función de los parámetros de consulta recibidos en la petición
+ * Se van a definir dos parámetros de consulta opcionales: age para filtrar edades menores o iguales a la edad suministrada y limit para limitar el número de resultados.
+ * Peticón de ejemplo: GET /users?age=30&limit=5
+ */
+
+/** DESCOMENTAR ESTA SECCIÓN PARA IMPLEMENTAR EL FILTRO POR PARÁMETROS DE CONSULTA
+app.get("/users", function (req, res) {
+  const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
+  // El objeto client es el que se emplea para interactuar
+  // con la base de datos.
+  // No olvide cerrar la conexión al finalizar este endpoint
+  // Para trabajar con la base de datos MongoDB es habitual definir una función asíncrona y lanzarla
+  async function run() {
+    try {
+      const db = client.db(DB_NAME);
+      const users = db.collection(DB_USERS_COLLECTION);
+
+      // Se extraen los parámetros de consulta (query parameters) de la petición
+      // Recuerde que estos valores también se pueden validar y sanitizar manualmente, o con express-validator o Joi.
+      // En esta caso no se valida, pero recuerde que esto es muy peligroso,
+      // ya que si el cliente envía un valor no numérico para age o limit, se podría provocar un error en la consulta a la base de datos.
+
+      const cursor = await users.find(
+        { age: { $lte: parseInt(req.query.age) } },
+        { limit: parseInt(req.query.limit) },
+      ); // La función find busca todos los documentos de la colección que coincidan con el filtro.
+      // En este caso el filtro está vacío y por lo tanto extrae todos los documentos.
+      // find() devuelve un cursor que permite manejar el resultado de muchas formas.
+      const result = await cursor.toArray(); // Extraemos todos los documentos como un array JSON.
+      res.json(result); // Permite responder automáticamente con estado 200 y datos en JSON.
+    } finally {
+      await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
+    }
+  }
+
+  //Se lanza la función asíncrona run() y se capturan los errores (excepciones) con el método catch.
+  run().catch((ex) => {
+    console.error("[SERVIDOR] GET /users: " + ex.toString());
+    res.status(STATUS_SERVER_ERROR).end();
+  });
+});
+*/
 // Último endpoint por defecto por si la petición no está en el API REST - Error 404
 app.use((req, res) => {
   res.status(404).end();
-})
+});
 
 console.log(`[SERVIDOR] Iniciando servidor HTTP sobre Node.js 
            Servicio ${SERVICE_NAME}
            Versión ${VERSION}           
--------------------------------------------------`)
-
+-------------------------------------------------`);
 
 // Este código emplea el módulo dns y el os para buscar la IP del host
-dns.lookup(os.hostname(), 4, function (err, address, family) { // 4 para IPv4
+dns.lookup(os.hostname(), 4, function (err, address, family) {
+  // 4 para IPv4
   if (err) {
-    console.error('[SERVIDOR] Error al obtener la IP del servidor.');
+    console.error("[SERVIDOR] Error al obtener la IP del servidor.");
   } else {
-    console.log('[SERVIDOR] IP del servidor: ' + address.toString());
+    console.log("[SERVIDOR] IP del servidor: " + address.toString());
     // Se inicia el servidor HTTP una vez se ha buscado la IP en el puerto prefijado
     app.listen(SERVICE_PORT, address.toString(), () => {
-      console.log(`[SERVIDOR] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`)
-    })
+      console.log(
+        `[SERVIDOR] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`,
+      );
+    });
   }
-})
+});
