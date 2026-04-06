@@ -28,9 +28,8 @@ const os = require("node:os"); // Módulo de información relativa al sistema op
 const dns = require("node:dns"); // Módulo para emplear el servicio DNS
 
 const express = require("express"); // Importación del paquete Express
-require("dotenv").config(); // Carga todas la variables de estado en process.env
-
-console.log(process.env);
+require("dotenv").config(); // Carga todas la variables de estado en el fichero .env en process.env
+var jwt = require("jsonwebtoken"); // Se carga el paquete de JSON Web token
 
 const app = new express(); // Creación de la aplicación Express
 
@@ -62,6 +61,23 @@ app.post("/login", (req, res) => {
       res.status(STATUS_BADFORMAT).end();
     } else if (req.body.user === "user" && req.body.password === "1234") {
       // Autenticación correcta
+      // Se crea el token
+      var token = jwt.sign(
+        { sub: req.body.user,
+          iat:Date.now()
+         },
+        process.env.JWTSECRET,
+        {
+          expiresIn: "15m",
+        },
+        function (err, token) {
+          if (err) {
+            console.error("[SERVICIO] Error JWT: " + err);
+          } else {
+            console.log("[SERVICIO] Token creado: " + token);
+          }
+        },
+      );
       res.status(STATUS_OK).end();
     } else {
       // Error en la autenticación
