@@ -1,5 +1,5 @@
 /*
- * Fase 3 - Tarea 2 - Aplicación básica con servicio login
+ * Fase 3 - Tarea 2 - Aplicación básica con servicio login con JSON Web Token
  * ASIGNATURA: Servicios y Aplicaciones Telemáticas
  * TITULACIÓN: Grado en Ingeniería de tecnologías de telecomunicación (14312020)
  * TITULACIÓN: Doble Grado Ing. de tecnologías de la telecomunicación e Ing. telemática (15212007)
@@ -27,7 +27,10 @@ const STATUS_SERVER_ERROR = 500;
 const os = require("node:os"); // Módulo de información relativa al sistema operativo y el host
 const dns = require("node:dns"); // Módulo para emplear el servicio DNS
 
-const express = require("express"); //Importación del paquete Express
+const express = require("express"); // Importación del paquete Express
+require("dotenv").config(); // Carga todas la variables de estado en process.env
+
+console.log(process.env);
 
 const app = new express(); // Creación de la aplicación Express
 

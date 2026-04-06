@@ -124,10 +124,14 @@ dns.lookup(os.hostname(), 4, function (err, address, family) {
   } else {
     console.log("[SERVIDOR] IP del servidor: " + address.toString());
     // Se inicia el servidor HTTP una vez se ha buscado la IP en el puerto prefijado
-    app.listen(SERVICE_PORT, address.toString(), () => {
-      console.log(
-        `[SERVIDOR] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`,
-      );
+    app.listen(SERVICE_PORT, address.toString(), (error) => {
+      if (error) {
+        console.error(`[SERVIDOR] Error al inicializar: ${error}`);
+      } else {
+        console.log(
+          `[SERVIDOR] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`,
+        );
+      }
     });
   }
 });

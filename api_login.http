@@ -1,0 +1,7 @@
+POST http://192.168.56.1:8081/login HTTP/1.1
+content-type: application/json
+
+{
+    "user": "user2",
+    "password": "1234"
+}
