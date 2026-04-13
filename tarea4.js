@@ -83,7 +83,7 @@ app.post("/users", function (req, res) {
         console.log(
           `[SERVIDOR] Documento insertado con _id: ${result.insertedId}`,
         );
-        res.json({ _id: result.insertedId }); // Permite responder automáticamente con estado 200 y datos en JSON.
+        res.status(STATUS_CREATED).json({ _id: result.insertedId }); // Permite responder automáticamente con estado 200 y datos en JSON.
       }
     } finally {
       await client.close(); // Siempre debemos cerrar la conexión con la base de datos.
