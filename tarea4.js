@@ -55,7 +55,26 @@ app.use((req, res, next) => {
  * Inserta los datos de un usuario recibidos en la petición en formato JSON
  * en la base de datos, si su nombre de usuario no existe ya
  */
-app.post("/users", function (req, res) {
+
+// Ejemplo de middleware de validación con función tradicional
+function validaUser(req, res, next) {
+  if (req.body !== undefined) {
+    next();
+  } else {
+    res.status(STATUS_BADFORMAT).end();
+  }
+}
+// Ejemplo de middleware de validación con función flecha en una sentencia
+const vFlecha = (req, res, next) => {
+  if (req.body !== undefined) {
+    next();
+  } else {
+    res.status(STATUS_BADFORMAT).end();
+  }
+};
+// Con función tradicional:
+//app.post("/users", (req,res,next)=>validaUser(req,res,next),function (req, res) {
+app.post("/users", vFlecha, function (req, res) {
   // Antes de proceder se debería validar que se han recibido los datos apropiados.
   console.dir(req.body);
 
