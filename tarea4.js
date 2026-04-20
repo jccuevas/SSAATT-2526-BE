@@ -121,7 +121,7 @@ app.post("/users", vFlecha, function (req, res) {
  * Recupera los datos de todos los usuarios almacenados en la base de datos
  */
 /* COMENTAR ESTA TAREA CUANDO SE VAYA A TRABAJAR EN LA TAREA 4.5, YA QUE SE EMPLEARÁ ESTE MISMO ENDPOINT PARA IMPLEMENTAR LOS FILTROS POR PARÁMETROS DE CONSULTA */
-app.get("/users", function (req, res) {
+/*app.get("/users", function (req, res) {
   const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
   // El objeto client es el que se emplea para interactuar
   // con la base de datos.
@@ -148,7 +148,7 @@ app.get("/users", function (req, res) {
     res.status(STATUS_SERVER_ERROR).end();
   });
 });
-
+*/
 /**
  * Tarea 4.4 Servicio GET /users/:id
  * Recupera los datos de un usuario específico almacenado en la base de datos
@@ -213,7 +213,8 @@ app.get("/users/:id", function (req, res) {
  * Peticón de ejemplo: GET /users?age=30&limit=5
  */
 
-/** DESCOMENTAR ESTA SECCIÓN PARA IMPLEMENTAR EL FILTRO POR PARÁMETROS DE CONSULTA
+/** DESCOMENTAR ESTA SECCIÓN PARA IMPLEMENTAR EL FILTRO POR PARÁMETROS DE CONSULTA*/
+//URL ejemplo http://dominio/users?param1=1
 app.get("/users", function (req, res) {
   const client = new MongoClient(DB_URL); // Conexión con la base de datos MongoDB
   // El objeto client es el que se emplea para interactuar
@@ -229,11 +230,15 @@ app.get("/users", function (req, res) {
       // Recuerde que estos valores también se pueden validar y sanitizar manualmente, o con express-validator o Joi.
       // En esta caso no se valida, pero recuerde que esto es muy peligroso,
       // ya que si el cliente envía un valor no numérico para age o limit, se podría provocar un error en la consulta a la base de datos.
-
+      // SESION 3 -Se puede permitir que solo esté disponible alguna de las 
+      // condiciones de la query y se puede emplear el operador ternario:
+      // condicion ? true : false;
       const cursor = await users.find(
-        { age: { $lte: parseInt(req.query.age) } },
-        { limit: parseInt(req.query.limit) },
-      ); // La función find busca todos los documentos de la colección que coincidan con el filtro.
+        req.query.age!==undefined ? { age: { $gte: parseInt(req.query.age) } }:undefined,
+        req.query.limit!==undefined ? { limit: parseInt(req.query.limit) }:undefined,
+      );
+      
+       // La función find busca todos los documentos de la colección que coincidan con el filtro.
       // En este caso el filtro está vacío y por lo tanto extrae todos los documentos.
       // find() devuelve un cursor que permite manejar el resultado de muchas formas.
       const result = await cursor.toArray(); // Extraemos todos los documentos como un array JSON.
@@ -249,7 +254,7 @@ app.get("/users", function (req, res) {
     res.status(STATUS_SERVER_ERROR).end();
   });
 });
-*/
+/**/
 
 /**
  * Tarea 4.6 Servicio DELETE /users/:id
