@@ -36,6 +36,7 @@ app.use(express.json()); // Para procesar tipos de datos application/json.
 // acceder a cada propiedad del cuerpo de la petición por su nombre.
 
 const { MongoClient, ObjectId } = require("mongodb"); // Se importa MongoClient del paquete mongodb
+const { query } = require("express-validator");
 
 // Definición de las constantes de la base de datos
 const DB_URL = "mongodb://localhost:27017/"; //URL de la base de datos local MongoDB
@@ -233,11 +234,19 @@ app.get("/users", function (req, res) {
       // SESION 3 -Se puede permitir que solo esté disponible alguna de las 
       // condiciones de la query y se puede emplear el operador ternario:
       // condicion ? true : false;
+
+      /*
       const cursor = await users.find(
         req.query.age!==undefined ? { age: { $gte: parseInt(req.query.age) } }:undefined,
         req.query.limit!==undefined ? { limit: parseInt(req.query.limit) }:undefined,
       );
-      
+*/
+      let options = new Object();
+      req.query.age!==undefined ? options.age={ $gte: parseInt(req.query.age) }: undefined;
+      req.query.limit!==undefined ? options.limit = parseInt(req.query.limit) : undefined;
+
+      console.dir(options);
+      const cursor = await users.find({},options);
        // La función find busca todos los documentos de la colección que coincidan con el filtro.
       // En este caso el filtro está vacío y por lo tanto extrae todos los documentos.
       // find() devuelve un cursor que permite manejar el resultado de muchas formas.
