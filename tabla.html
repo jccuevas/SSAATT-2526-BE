@@ -1,0 +1,36 @@
+<table>
+  <tr id="1">
+    <td class="available" id="turno_lunes_1"></td>
+    <td class="available" id="turno_martes_1"></td>
+  </tr>
+</table>
+
+<script>
+    //Estos serían los datos recibidos de nuestro servicio
+  const turnlist = [
+    {
+      user: "23lkj23487012983",
+      day: "lunes",
+      turn: "2",
+    },
+    {
+      user: "23lkj23487012983",
+      day: "martes",
+      turn: "2",
+    },
+  ];
+
+  function markTurn(data) {
+    data.forEach((data) => {
+      const celda = document.getElementById(
+        "turno_" + data.day + "_" + data.turn,
+      );
+      if (celda != null) {
+        celda.classList.add("reserved");
+        celda.innerText = turno.user;
+      }
+    });
+  }
+
+  markTurn(turnlist);
+</script>
