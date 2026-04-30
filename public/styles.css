@@ -1,0 +1,65 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+section {
+  padding: 0.5em;
+  background-color: #f0f0f0;
+  margin-bottom: 20px;
+  overflow: auto;
+}
+form {
+  margin-bottom: 20px;
+}
+label {
+  display: inline-block;
+  width: 100px;
+}
+input {
+  padding: 5px;
+  width: 200px;
+}
+button {
+  padding: 5px 10px;
+  margin-top: 10px;
+}
+
+aside {
+  margin-top: 20px;
+  float: right;
+}
+
+image {
+  display: block;
+  margin-top: 20px;
+  max-width: 100%;
+  height: auto;
+}
+
+section h2 {
+  background-color: darkgray;
+  padding: 5px;
+}
+
+header {
+  background-color: black;
+  color: white;
+  padding: 0.5em;
+  margin-bottom: 20px;
+}
+
+footer {
+  background-color: black;
+  color: white;
+  padding: 0.5em;
+  margin-top: 20px;
+  text-align: center;
+  color: #888;
+}
+
+footer h1 {
+  color: white;
+  margin-bottom: 1em;
+  font-size: 1.5em;
+}
