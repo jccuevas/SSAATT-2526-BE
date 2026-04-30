@@ -40,17 +40,18 @@ app.use(express.json()); // Para procesar tipos de datos application/json.
 // Esto permite que en el objeto Request (req) se pueda emplear la propiedad req.body para
 // acceder a cada propiedad del cuerpo de la petición por su nombre.
 
-const { MongoClient, ObjectId } = require("mongodb"); // Se importa MongoClient del paquete mongodb
+// Se eliminan las constantes de la base de datos que se han movido al endpoint correspondiente, ya que no se emplean en el resto del código del servidor HTTP, sino que solo se emplean en el endpoint de autenticación de usuarios. De esta forma, se mejora la modularidad del código y se evita la inclusión de código innecesario en el resto del servidor HTTP, lo que puede mejorar la eficiencia y la claridad del código.
+//const { MongoClient, ObjectId } = require("mongodb"); // Se importa MongoClient del paquete mongodb
 
 // Definición de las constantes de la base de datos
-const DB_URL = "mongodb://localhost:27017/"; //URL de la base de datos local MongoDB
-const DB_NAME = "ssaatt"; // Puede cambiar el nombre al que desee y que mejor defina yo proyecto
-const DB_USERS_COLLECTION = "users"; // Ponga el nombre de las colecciones MongoDB en plural.
+//const DB_URL = "mongodb://localhost:27017/"; //URL de la base de datos local MongoDB
+//const DB_NAME = "ssaatt"; // Puede cambiar el nombre al que desee y que mejor defina yo proyecto
+//const DB_USERS_COLLECTION = "users"; // Ponga el nombre de las colecciones MongoDB en plural.
 
 //Primer endpoint - Punto de entrada genérico al servidor para guardar registro de las peticiones entrantes
 app.use((req, res, next) => {
   console.log(
-    `[${SERVICE_NAME}] [${new Date().toISOString()}] Petición entrante: ${req.method} ${req.path} ${req.query} desde ${req.ip}`,
+    `[${SERVICE_NAME}] [${new Date().toISOString()}] Petición entrante: ${req.ip} ${req.method} ${req.path}`,
   );
   next(); //Hace que se pase el proceso al siguiente endpoint que coincida
 });
@@ -58,6 +59,15 @@ app.use((req, res, next) => {
 // API del servicio
 // Pendiente de definir los endpoints de la API REST del servicio. Se pueden definir tantos endpoints como se necesiten para el servicio, empleando los métodos HTTP adecuados (GET, POST, PUT, DELETE, etc.) y el formato de las rutas que se considere más adecuado para cada caso.
 // Se debe emplear Router, no se deben incluir los endpoints directamente en el objeto app, sino que se deben definir en un objeto Router y luego incluirlo en el objeto app con el método use().
+
+//Tarea 1.2 - Se incluye el endpoint de autenticación de usuarios en el servidor HTTP, empleando Router para modularizar el código del endpoint y mejorar la organización del código del servidor HTTP. Se debe crear un archivo para cada endpoint en la carpeta "routes" del proyecto, y luego incluirlo en el servidor HTTP con el método use() de Express, indicando la ruta del endpoint correspondiente.
+// Este objeto permite tener un código más organizado y modular donde encontrar todos los endpoints del API REST del servicio
+const API = {
+  LOGIN: "/login", // Reemplazar por la ruta del endpoint de cada equipo
+};
+
+const loginRouter = require("./routes/f4_login"); // Se elige el archivo del endpoint de autenticación de usuarios, que se ha creado en la carpeta "routes" del proyecto, y se importa como un módulo para incluirlo en el servidor HTTP con el método use() de Express.
+app.use(API.LOGIN, loginRouter); // Reemplazar por la ruta del endpoint de cada equipo
 
 // Último endpoint por defecto por si la petición no está en el API REST - Error 404
 app.use((req, res) => {
