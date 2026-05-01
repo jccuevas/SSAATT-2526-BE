@@ -10,9 +10,8 @@
  */
 
 // Datos del servicio
-const VERSION = "1.0"; // Variable para indicar la versión del servicio
-const SERVICE_NAME = "login"; // Reemplazar por el nombre del servicio de cada equipo
-
+const SERVICE_NAME = "login";
+const SERVICE_ROOT = "/"; // Ruta raíz del servicio, que se emplea para montar el router Express del endpoint de gestión de usuarios en el servidor HTTP. Reemplazar por la ruta del endpoint de cada equipo, por ejemplo "/users" o "/api/users", etc.
 // Definición de códigos de estado que emplea la aplicación
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
@@ -34,7 +33,7 @@ var express = require("express");
 var router = express.Router();
 
 // Endpoint de autenticación de usuarios POST /login
-router.post("/", (req, res) => {
+router.post(SERVICE_ROOT, (req, res) => {
   if (req.body != undefined) {
     console.dir(req.body);
     //Antes de acceder a cada propiedad se debería comprobar su existencia como con express-validator

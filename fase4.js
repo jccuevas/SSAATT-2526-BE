@@ -10,8 +10,8 @@
  */
 
 // Datos del servicio
-const SERVICE_VERSION = "1.0"; // Variable para indicar la versión del servicio
-const SERVICE_NAME = "Nombre del servicio"; // Reemplazar por el nombre del servicio de cada equipo
+const APPLICATION_VERSION = "1.0"; // Variable para indicar la versión de la aplicación
+const APPLICATION_NAME = "Nombre de la aplicación"; // Reemplazar por el nombre de la aplicación de cada equipo
 const SERVICE_PORT = 8081; // Puerto para el servicio HTTP
 
 // Definición de códigos de estado que emplea la aplicación
@@ -51,7 +51,7 @@ app.use(express.json()); // Para procesar tipos de datos application/json.
 //Primer endpoint - Punto de entrada genérico al servidor para guardar registro de las peticiones entrantes
 app.use((req, res, next) => {
   console.log(
-    `[${SERVICE_NAME}] [${new Date().toISOString()}] Petición entrante: ${req.ip} ${req.method} ${req.path}`,
+    `[${APPLICATION_NAME}] [${new Date().toISOString()}] Petición entrante: ${req.ip} ${req.method} ${req.path}`,
   );
   next(); //Hace que se pase el proceso al siguiente endpoint que coincida
 });
@@ -63,35 +63,41 @@ app.use((req, res, next) => {
 //Tarea 1.2 - Se incluye el endpoint de autenticación de usuarios en el servidor HTTP, empleando Router para modularizar el código del endpoint y mejorar la organización del código del servidor HTTP. Se debe crear un archivo para cada endpoint en la carpeta "routes" del proyecto, y luego incluirlo en el servidor HTTP con el método use() de Express, indicando la ruta del endpoint correspondiente.
 // Este objeto permite tener un código más organizado y modular donde encontrar todos los endpoints del API REST del servicio
 const API = {
-  LOGIN: "/login", // Reemplazar por la ruta del endpoint de cada equipo
+  LOGIN: "/login", // Servicio de autenticación de usuarios
+  USERS: "/users", // Servicio de gestión de usuarios
 };
 
+// Router para el endpoint de autenticación de usuarios
 const loginRouter = require("./routes/f4_login"); // Se elige el archivo del endpoint de autenticación de usuarios, que se ha creado en la carpeta "routes" del proyecto, y se importa como un módulo para incluirlo en el servidor HTTP con el método use() de Express.
 app.use(API.LOGIN, loginRouter); // Reemplazar por la ruta del endpoint de cada equipo
+
+//Router para la gestión de usuarios
+const usersRouter = require("./routes/f4_users"); // Se elige el archivo del endpoint de gestión de usuarios, que se ha creado en la carpeta "routes" del proyecto, y se importa como un módulo para incluirlo en el servidor HTTP con el método use() de Express.
+app.use(API.USERS, usersRouter); // Reemplazar por la ruta del endpoint de cada equipo
 
 // Último endpoint por defecto por si la petición no está en el API REST - Error 404
 app.use((req, res) => {
   res.status(404).end();
 });
 
-console.log(`[${SERVICE_NAME}] Iniciando servidor HTTP sobre Node.js 
-           Versión ${SERVICE_VERSION}           
+console.log(`[${APPLICATION_NAME}] Iniciando servidor HTTP sobre Node.js 
+           Versión ${APPLICATION_VERSION}           
 -------------------------------------------------`);
 
 // Este código emplea el módulo dns y el os para buscar la IP del host
 dns.lookup(os.hostname(), 4, function (err, address, family) {
   // 4 para IPv4
   if (err) {
-    console.error(`[${SERVICE_NAME}] Error al obtener la IP del servidor.`);
+    console.error(`[${APPLICATION_NAME}] Error al obtener la IP del servidor.`);
   } else {
-    console.log(`[${SERVICE_NAME}] IP del servidor: ${address.toString()}`);
+    console.log(`[${APPLICATION_NAME}] IP del servidor: ${address.toString()}`);
     // Se inicia el servidor HTTP una vez se ha buscado la IP en el puerto prefijado
     app.listen(SERVICE_PORT, address.toString(), (error) => {
       if (error) {
-        console.error(`[${SERVICE_NAME}] Error al inicializar: ${error}`);
+        console.error(`[${APPLICATION_NAME}] Error al inicializar: ${error}`);
       } else {
         console.log(
-          `[${SERVICE_NAME}] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`,
+          `[${APPLICATION_NAME}] Servidor ejecutándose en http://${address}:${SERVICE_PORT}`,
         );
       }
     });
