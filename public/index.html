@@ -28,8 +28,17 @@ tan solo muestra ejemplos de cómo realizar peticiones CRUD a un servidor REST c
       </header>
       <section>
         <h2>Ejemplo de autenticación de usuario</h2>
-        <button id="doLogin" onclick="doLogin()">Autenticar usuario</button>
+        <button id="doLogin" onclick="doLogin(event)">
+          Autenticar usuario
+        </button>
         <p id="loginResult"></p>
+      </section>
+      <section>
+        <h2>Ejemplo de registro de usuario</h2>
+        <button id="createUser" onclick="doCreateUser(event)">
+          Registrar usuario
+        </button>
+        <p id="createUserResult"></p>
       </section>
     </main>
     <footer>
