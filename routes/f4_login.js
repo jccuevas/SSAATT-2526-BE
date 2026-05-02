@@ -41,7 +41,7 @@ router.post(SERVICE_ROOT, (req, res) => {
     if (req.body.user === undefined || req.body.password === undefined) {
       //No se cumple el formato esperado
       console.log(
-        `${SERVICE_NAME} - Formato de datos incorrecto en la petición de autenticación: `,
+        `${SERVICE_NAME} - Formato de datos incorrecto en la petición de autenticación: `
       );
       res.status(STATUS_BADFORMAT).end();
     } else {
@@ -50,7 +50,7 @@ router.post(SERVICE_ROOT, (req, res) => {
       run().catch((error) => {
         console.error(
           `${SERVICE_NAME} - Error en la autenticación de usuarios:`,
-          error,
+          error
         );
         res.status(STATUS_SERVER_ERROR).end();
       });
@@ -73,14 +73,14 @@ router.post(SERVICE_ROOT, (req, res) => {
         // ya que esta debería estar almacenada de forma segura en la base de datos, como por ejemplo con un hash de la clave y una sal,
         // este es solo un ejemplo para comprobar el funcionamiento del endpoint
         console.log(
-          `${SERVICE_NAME} - Autenticación correcta para el usuario ${req.body.user}`,
+          `${SERVICE_NAME} - Autenticación correcta para el usuario ${req.body.user}`
         );
-        res.status(STATUS_OK).end();
+        res.json({ id: user._id });
       } else {
         // La clave proporcionada no coincide con la clave almacenada en la base de datos para ese usuario
         // Nunca se informa al cliente de si el error se debe a que el usuario no existe o a que la clave es incorrecta, para evitar dar pistas a posibles atacantes
         console.log(
-          `${SERVICE_NAME} - Autenticación fallida para el usuario ${req.body.user}`,
+          `${SERVICE_NAME} - Autenticación fallida para el usuario ${req.body.user}`
         );
         res.status(STATUS_UNAUTHORIZED).end();
       }
