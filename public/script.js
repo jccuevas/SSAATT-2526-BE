@@ -115,3 +115,60 @@ async function createUser(user) {
     return null;
   }
 }
+
+async function doGetUsers() {
+  const response = await fetch(SERVER_URL_LOCAL + ENDPOINTS.USERS);
+  if (response.ok) {
+    const users = await response.json();
+    if (users.length > 0) {
+      console.log("Usuarios obtenidos: " + JSON.stringify(users));
+      drawUserList(users); // Función para mostrar los usuarios obtenidos en la interfaz de usuario, por ejemplo en una tabla
+    } else {
+      console.log("No se encontraron usuarios");
+      alert("No se encontraron usuarios");
+    }
+  } else {
+    console.error(
+      "Error al obtener los usuarios, código de estado: " + response.status
+    );
+  }
+}
+
+/**
+ * Función que muestra una lista de usuarios obtenidos en la interfaz de usuario
+ * @param {Array} users - Array de objetos con los datos de los usuarios a mostrar en la interfaz de usuario
+ */
+function drawUserList(users) {
+  const listUsers = document.getElementById("listUsersResult");
+  listUsers.innerHTML = ""; // Limpiamos el contenido anterior de la tabla de usuarios
+  users.forEach((user) => {
+    const newUser = drawUser(user); // Función para mostrar un usuario obtenido en la interfaz de usuario, por ejemplo añadiendo una fila a una tabla por cada usuario
+    if (newUser) {
+      listUsers.appendChild(newUser);
+    }
+  });
+}
+
+/**
+ * Esta función crea un elemento HTML para mostrar un usuario obtenido en la interfaz de usuario
+ * @param {Object} user - Objeto con los datos del usuario a mostrar en la interfaz de usuario
+ * @returns Elemento HTML con los datos del usuario a mostrar en la interfaz de usuario
+ */
+function drawUser(user) {
+  if (user == null) {
+    return null;
+  }
+
+  const userElement = document.createElement("li");
+  userElement.classList.add("userListItem");
+  const span = document.createElement("span");
+  span.textContent = ` ${user.name} ${user.surname}`;
+  const detailsButton = document.createElement("button");
+  detailsButton.textContent = "Detalles";
+  const deleteButton = document.createElement("button");
+  deleteButton.textContent = "Eliminar";
+  userElement.appendChild(span);
+  userElement.appendChild(detailsButton);
+  userElement.appendChild(deleteButton);
+  return userElement;
+}
