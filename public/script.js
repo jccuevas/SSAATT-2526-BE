@@ -78,10 +78,10 @@ async function doCreateUser(event) {
   event.preventDefault();
   const user = {
     user: "user",
-    email: "user3@usuarios.net",
+    email: "user@usuarios.net",
     password: "1234",
-    name: "Usuario",
-    surname: "Usuer"
+    name: "Usuario de prueba",
+    surname: "Apellido de prueba"
   };
   const userId = await createUser(user);
   if (userId) {
@@ -170,6 +170,8 @@ function drawUser(user) {
   }
 
   const userElement = document.createElement("li");
+  // Tarea 6. Uso de fetch() para eliminar un registro
+  userElement.id = user._id; // Guardamos el _id del usuario en el elemento HTML para poder eliminarlo posteriormente
   userElement.classList.add("userListItem");
   const span = document.createElement("span");
   span.textContent = ` ${user.name} ${user.surname}`;
@@ -182,9 +184,27 @@ function drawUser(user) {
   detailsButton.addEventListener("click", () => showUserDetails(user)); // Función para mostrar los detalles del usuario en la interfaz de usuario, por ejemplo en un cuadro de diálogo modal o en una sección de la página dedicada a mostrar los detalles del usuario
   const deleteButton = document.createElement("button");
   deleteButton.textContent = "Eliminar";
+  // T6 - Uso de fetch() para eliminar un registro
+  deleteButton.addEventListener("click", () => {
+    // Función para eliminar el usuario de la lista:
+    // 1. Enviar petición DELETE /usere/:id
+    // 2. Comprobar si el código de estado es 200 (éxito)
+    //   2.1 Borrar también el elemento HTML correspondiente: hemos debido poner el _id a cada elemento de lista creado.
+    if (confirm("¿Está seguro de que desea eliminar el usuario?")) {
+      if (deleteUser(user._id)) {
+        const userElement = document.getElementById(user._id);
+        if (userElement) {
+          userElement.remove();
+          alert("Usuario eliminado correctamente");
+        }
+      } else {
+        console.error("Error al eliminar el usuario con id: " + user._id);
+        alert("Fallo al eliminar el usuario");
+      }
+    }
+  });
   userElement.appendChild(span);
   userElement.appendChild(detailsButton);
-
   userElement.appendChild(deleteButton);
   return userElement;
 }
@@ -209,4 +229,28 @@ function showUserDetails(user) {
 function closeUserDetails() {
   const dialog = document.getElementById("userDetailsDialog");
   dialog.close();
+}
+
+/**
+ * Tarea 6. Uso de fetch() para eliminar un registro
+ * @param {String} userId - Id del usuario a eliminar
+ * @returns true si se ha eliminado correctamente, false en otro caso
+ */
+async function deleteUser(userId) {
+  const init = {
+    method: "DELETE"
+  };
+  const response = await fetch(
+    SERVER_URL_LOCAL + ENDPOINTS.USERS + "/" + userId,
+    init
+  );
+  if (response.ok) {
+    console.log("Usuario eliminado con id: " + userId);
+    return true;
+  } else {
+    console.error(
+      "Error al eliminar el usuario, código de estado: " + response.status
+    );
+    return false;
+  }
 }

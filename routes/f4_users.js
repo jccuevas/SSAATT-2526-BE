@@ -67,14 +67,14 @@ router.post(SERVICE_ROOT, validaUser, function (req, res) {
       if (buscado !== 0) {
         //Usuario que ya existe
         console.log(
-          `[SERVIDOR] El usuario ${req.body.user} ya existe en la base de datos`,
+          `[SERVIDOR] El usuario ${req.body.user} ya existe en la base de datos`
         );
         res.status(STATUS_FORBIDDEN).end(); //Se responde con el código 403 forbidden
       } else {
         //El usuario a introducir no existe, por lo tanto se insertará
         const result = await users.insertOne(req.body); //Se insertan los datos del nuevo usuario en la colección
         console.log(
-          `[SERVIDOR] Documento insertado con _id: ${result.insertedId}`,
+          `[SERVIDOR] Documento insertado con _id: ${result.insertedId}`
         );
         res.status(STATUS_CREATED).json({ _id: result.insertedId }); // Permite responder automáticamente con estado 200 y datos en JSON.
       }
@@ -142,7 +142,7 @@ router.get(`${SERVICE_ROOT}:id`, function (req, res) {
 
       const id = new ObjectId(req.params.id); // Se extrae el id del usuario a buscar de los parámetros de la ruta
       console.log(
-        `[${SERVICE_NAME}] Intentando recuperar el usuario con id: ${id.toString()}`,
+        `[${SERVICE_NAME}] Intentando recuperar el usuario con id: ${id.toString()}`
       );
       const result = await users.findOne({ _id: id }); // La función find busca el documento con el id especificado
       // En este caso el filtro tiene un valor y por lo tanto extrae solo el documento que coincide.
@@ -153,13 +153,13 @@ router.get(`${SERVICE_ROOT}:id`, function (req, res) {
       }
     } catch (error) {
       console.log(
-        `[${SERVICE_NAME}] Error al recuperar el usuario con id: ${id.toString()}`,
+        `[${SERVICE_NAME}] Error al recuperar el usuario con id: ${id.toString()}`
       );
       if (error instanceof Error && error.name === "BSONError") {
         console.error("[SERVIDOR] Error en el formato del id: " + error);
         res.status(STATUS_BADFORMAT).json({
           message: "Formato de id inválido",
-          error: error.message,
+          error: error.message
         });
       } else {
         // Nota sobre seguridad: En un entorno de producción no se deberían mostrar los mensajes de error internos del servidor a los clientes,
@@ -177,8 +177,8 @@ router.get(`${SERVICE_ROOT}:id`, function (req, res) {
   }
 
   //Se lanza la función asíncrona run() y se capturan los errores (excepciones) con el método catch.
-  run().catch((ex) => {
-    console.error("[SERVIDOR] GET /users: " + ex.toString());
+  run().catch((error) => {
+    console.error("[SERVIDOR] GET /users: " + error.toString());
     res
       .status(STATUS_SERVER_ERROR)
       .json({ message: "Error del servidor", error: error.message });
@@ -205,7 +205,7 @@ router.delete(`${SERVICE_ROOT}:id`, function (req, res) {
       const id = new ObjectId(req.params.id); // Se extrae el id del usuario a borrar de los parámetros de la ruta
 
       console.log(
-        `[${SERVICE_NAME}] Intentando eliminar el usuario con id: ${id.toString()}`,
+        `[${SERVICE_NAME}] Intentando eliminar el usuario con id: ${id.toString()}`
       );
       const result = await users.deleteOne({ _id: id }); // La función deleteOne elimina el documento con el id especificado
       if (result.acknowledged && result.deletedCount === 1) {
@@ -216,13 +216,13 @@ router.delete(`${SERVICE_ROOT}:id`, function (req, res) {
       }
     } catch (error) {
       console.log(
-        `[${SERVICE_NAME}] Error al eliminar el usuario con id: ${id.toString()}`,
+        `[${SERVICE_NAME}] Error al eliminar el usuario con id: ${id.toString()}`
       );
       if (error instanceof Error && error.name === "BSONError") {
         console.error("[SERVIDOR] Error en el formato del id: " + error);
         res.status(STATUS_BADFORMAT).json({
           message: "Formato de id inválido",
-          error: error.message,
+          error: error.message
         });
       } else {
         // Nota sobre seguridad: En un entorno de producción no se deberían mostrar los mensajes de error internos del servidor a los clientes,
@@ -288,7 +288,7 @@ router.put(`${SERVICE_ROOT}:id`, validaUser, function (req, res) {
         console.error("[SERVIDOR] Error en el formato del id: " + error);
         res.status(STATUS_BADFORMAT).json({
           message: "Formato de id inválido",
-          error: error.message,
+          error: error.message
         });
       } else {
         // Nota sobre seguridad: En un entorno de producción no se deberían mostrar los mensajes de error internos del servidor a los clientes,
