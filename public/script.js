@@ -1,4 +1,4 @@
-const SERVER_URL_LOCAL = "http://192.168.1.154:8081"; // Reemplazar por la IP local del servidor y el puerto que se haya definido para el servicio HTTP
+const SERVER_URL_LOCAL = "/"; // Reemplazar por la IP local del servidor y el puerto que se haya definido para el servicio HTTP
 
 // Definición de los endpoints de la API REST del servicio
 const ENDPOINTS = {
