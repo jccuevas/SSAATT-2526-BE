@@ -1,4 +1,4 @@
-const SERVER_URL_LOCAL = "/"; // Reemplazar por la IP local del servidor y el puerto que se haya definido para el servicio HTTP
+//const SERVER_URL_LOCAL = "/"; // Reemplazar por la IP local del servidor y el puerto que se haya definido para el servicio HTTP
 
 // Definición de los endpoints de la API REST del servicio
 const ENDPOINTS = {
@@ -31,7 +31,7 @@ function doLogin(event) {
     body: JSON.stringify(user)
   };
 
-  fetch(SERVER_URL_LOCAL + ENDPOINTS.LOGIN, init)
+  fetch(ENDPOINTS.LOGIN, init)
     .then((response) => {
       if (response.ok) {
         return response.json(); //Obtenemos el id del usuario autenticado que se ha enviado en la respuesta del endpoint de autenticación de usuarios del servicio HTTP
@@ -111,7 +111,7 @@ async function createUser(user) {
     body: JSON.stringify(user)
   };
 
-  const response = await fetch(SERVER_URL_LOCAL + ENDPOINTS.USERS, init);
+  const response = await fetch(ENDPOINTS.USERS, init);
   if (response.ok) {
     return await response.json(); //Obtenemos el id del usuario creado que se ha enviado en la respuesta del endpoint de gestión de usuarios del servicio HTTP
   } else {
@@ -125,7 +125,7 @@ async function createUser(user) {
  * y muestra la lista de usuarios obtenida en la interfaz de usuario
  */
 async function doGetUsers() {
-  const response = await fetch(SERVER_URL_LOCAL + ENDPOINTS.USERS);
+  const response = await fetch("/users");
   if (response.ok) {
     const users = await response.json();
     if (users.length > 0) {
@@ -174,7 +174,9 @@ function drawUser(user) {
   userElement.id = user._id; // Guardamos el _id del usuario en el elemento HTML para poder eliminarlo posteriormente
   userElement.classList.add("userListItem");
   const span = document.createElement("span");
-  span.textContent = ` ${user.name} ${user.surname}`;
+  span.textContent = `User: ${user.user} Nombre:${user.name}`;
+  const i = document.createElement("i");
+  i.innerText=`Edad: ${user.age}`;
   const detailsButton = document.createElement("button");
   detailsButton.textContent = "Detalles";
   // Tarea 5. Uso de fecth() para obtener los detalles de un usuario.
@@ -204,6 +206,7 @@ function drawUser(user) {
     }
   });
   userElement.appendChild(span);
+  userElement.appendChild(i);
   userElement.appendChild(detailsButton);
   userElement.appendChild(deleteButton);
   return userElement;
@@ -241,7 +244,7 @@ async function deleteUser(userId) {
     method: "DELETE"
   };
   const response = await fetch(
-    SERVER_URL_LOCAL + ENDPOINTS.USERS + "/" + userId,
+    ENDPOINTS.USERS + "/" + userId,
     init
   );
   if (response.ok) {
