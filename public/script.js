@@ -16,7 +16,7 @@ const ENDPOINTS = {
  * Endpoint: POST /login
  * @param {Event} event - Evento del formulario de login que se ha enviado
  **/
-function doLogin(event) {
+function apiLogin(event) {
   event.preventDefault(); // Evita que se recargue la página al enviar el formulario
   const user = {
     user: "user",
@@ -76,12 +76,12 @@ function doLogin(event) {
  */
 async function doCreateUser(event) {
   event.preventDefault();
+  const form = event.target;
   const user = {
-    user: "user",
-    email: "user@usuarios.net",
-    password: "1234",
-    name: "Usuario de prueba",
-    surname: "Apellido de prueba",
+    user: form.editUser_user.value,
+    name: form.editUser_name.value,
+    password: form.editUser_password.value,
+    age:form.editUser_age.value
   };
   const userId = await createUser(user);
   if (userId) {
@@ -273,7 +273,7 @@ async function apiDeleteUser(userId) {
 /**
  *
  */
-async function udateUserDetails(event) {
+async function apiUdateUserDetails(event) {
   event.preventDefault();
   const userid = event.target.editUser_id.value;
   //Actualizar el usuario
@@ -283,7 +283,7 @@ async function udateUserDetails(event) {
 
   const data = {
     name: name,
-    age: age,
+    age: parseInt(age),
     password: password
   };
   const init = {

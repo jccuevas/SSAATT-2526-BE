@@ -28,16 +28,28 @@ tan solo muestra ejemplos de cómo realizar peticiones CRUD a un servidor REST c
       </header>
       <section>
         <h2>Ejemplo de autenticación de usuario</h2>
-        <button id="doLogin" onclick="doLogin(event)">
+        <button id="doLogin" onclick="apiLogin(event)">
           Autenticar usuario
         </button>
         <p id="loginResult"></p>
       </section>
       <section>
         <h2>Ejemplo de registro de usuario</h2>
-        <button id="createUser" onclick="doCreateUser(event)">
-          Registrar usuario
-        </button>
+        <h3 id="editUser_title"></h3>
+          
+          <form name="editUser" onsubmit="doCreateUser(event)">
+            <input id="editUser_id" name="editUser_id" type="hidden">
+            <label for="editUser_user">User:</label>
+            <input id="editUser_user" type="text" name="editUser_user" required />
+            <label for="editUser_name">Nombre:</label>
+            <input id="editUser_name" type="text" name="editUser_name" required />
+            <label for="editUser_password">Clave:</label>
+            <input id="editUser_password" type="password" name="editUser_password" required />
+            <label for="editUser_age">Edad:</label>
+            <input id="editUser_age" type="number" name="editUser_age" />
+            <input type="submit" value="Registrar usuario" />
+          </form>
+        
         <p id="createUserResult"></p>
       </section>
       <section>
@@ -47,16 +59,16 @@ tan solo muestra ejemplos de cómo realizar peticiones CRUD a un servidor REST c
         </button>
         <ul id="listUsersResult"></ul>
         <dialog id="userDetailsDialog">
-          <h3 id="editUser_title"></h3>
+          <h3 id="createUser_title"></h3>
           
-          <form name="editUser" onsubmit="udateUserDetails(event)">
-            <input id="editUser_id" name="editUser_id" type="hidden">
-            <label for="editUser_name">Nombre:</label>
-            <input id="editUser_name" type="text" name="editUser_name" required />
-            <label for="editUser_password">Clave:</label>
-            <input id="editUser_password" type="password" name="editUser_password" required />
-            <label for="editUser_age">Edad:</label>
-            <input id="editUser_age" type="number" name="editUser_age" />
+          <form name="createUser" onsubmit="udateUserDetails(event)">
+            <input id="createUser_id" name="createUser_id" type="hidden">
+            <label for="createUser_name">Nombre:</label>
+            <input id="createUser_name" type="text" name="createUser_name" required />
+            <label for="createUser_password">Clave:</label>
+            <input id="createUser_password" type="password" name="createUser_password" required />
+            <label for="createUser_age">Edad:</label>
+            <input id="createUser_age" type="number" name="createUser_age" />
             <input type="submit" value="Actualizar" />
           </form>
           <button onclick="closeUserDetails()">Cerrar</button>

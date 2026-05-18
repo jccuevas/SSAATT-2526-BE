@@ -16,9 +16,11 @@ label {
   display: inline-block;
   width: 100px;
 }
-input {
-  padding: 5px;
+section input {
+  display: block;
+  padding: 0.5em;
   width: 200px;
+  margin-bottom: 0.5em;
 }
 button {
   padding: 5px 10px;
