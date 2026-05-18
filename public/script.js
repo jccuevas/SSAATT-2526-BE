@@ -3,7 +3,7 @@
 // Definición de los endpoints de la API REST del servicio
 const ENDPOINTS = {
   USERS: "/users",
-  LOGIN: "/login"
+  LOGIN: "/login",
 };
 
 // Mocks del API del cliente
@@ -20,15 +20,15 @@ function doLogin(event) {
   event.preventDefault(); // Evita que se recargue la página al enviar el formulario
   const user = {
     user: "user",
-    password: "1234"
+    password: "1234",
   };
 
   const init = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(user)
+    body: JSON.stringify(user),
   };
 
   fetch(ENDPOINTS.LOGIN, init)
@@ -37,7 +37,7 @@ function doLogin(event) {
         return response.json(); //Obtenemos el id del usuario autenticado que se ha enviado en la respuesta del endpoint de autenticación de usuarios del servicio HTTP
       } else {
         conole.log(
-          "Error en la autenticación, código de estado: " + response.status
+          "Error en la autenticación, código de estado: " + response.status,
         );
         alert("Fallo en la autenticación");
         // Usar la función creada para mostar un mensaje de error en la interfaz de usuario
@@ -54,7 +54,7 @@ function doLogin(event) {
         //Hacer los cambios necesarios en la interfaz de usuario para mostrar que el usuario se ha autenticado correctamente
       } else {
         conole.log(
-          "Error en la autenticación, código de estado: " + response.status
+          "Error en la autenticación, código de estado: " + response.status,
         );
         alert("Fallo en la autenticación");
         // Usar la función creada para mostar un mensaje de error en la interfaz de usuario
@@ -81,7 +81,7 @@ async function doCreateUser(event) {
     email: "user@usuarios.net",
     password: "1234",
     name: "Usuario de prueba",
-    surname: "Apellido de prueba"
+    surname: "Apellido de prueba",
   };
   const userId = await createUser(user);
   if (userId) {
@@ -106,9 +106,9 @@ async function createUser(user) {
   const init = {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify(user)
+    body: JSON.stringify(user),
   };
 
   const response = await fetch(ENDPOINTS.USERS, init);
@@ -137,7 +137,7 @@ async function doGetUsers() {
     }
   } else {
     console.error(
-      "Error al obtener los usuarios, código de estado: " + response.status
+      "Error al obtener los usuarios, código de estado: " + response.status,
     );
   }
 }
@@ -176,7 +176,7 @@ function drawUser(user) {
   const span = document.createElement("span");
   span.textContent = `User: ${user.user} Nombre:${user.name}`;
   const i = document.createElement("i");
-  i.innerText=`Edad: ${user.age}`;
+  i.innerText = `Edad: ${user.age}`;
   const detailsButton = document.createElement("button");
   detailsButton.textContent = "Detalles";
   // Tarea 5. Uso de fecth() para obtener los detalles de un usuario.
@@ -185,26 +185,10 @@ function drawUser(user) {
   // y no hace falta guardarlos de forma permanente.
   detailsButton.addEventListener("click", () => showUserDetails(user)); // Función para mostrar los detalles del usuario en la interfaz de usuario, por ejemplo en un cuadro de diálogo modal o en una sección de la página dedicada a mostrar los detalles del usuario
   const deleteButton = document.createElement("button");
-  deleteButton.textContent = "Eliminar";
+  //deleteButton.textContent = "Eliminar";
+  deleteButton.innerHTML = "<img src=/images/delete.svg alt='borrar'>";
   // T6 - Uso de fetch() para eliminar un registro
-  deleteButton.addEventListener("click", () => {
-    // Función para eliminar el usuario de la lista:
-    // 1. Enviar petición DELETE /usere/:id
-    // 2. Comprobar si el código de estado es 200 (éxito)
-    //   2.1 Borrar también el elemento HTML correspondiente: hemos debido poner el _id a cada elemento de lista creado.
-    if (confirm("¿Está seguro de que desea eliminar el usuario?")) {
-      if (deleteUser(user._id)) {
-        const userElement = document.getElementById(user._id);
-        if (userElement) {
-          userElement.remove();
-          alert("Usuario eliminado correctamente");
-        }
-      } else {
-        console.error("Error al eliminar el usuario con id: " + user._id);
-        alert("Fallo al eliminar el usuario");
-      }
-    }
-  });
+  deleteButton.addEventListener("click", () => deleteUser(user._id));
   userElement.appendChild(span);
   userElement.appendChild(i);
   userElement.appendChild(detailsButton);
@@ -212,6 +196,26 @@ function drawUser(user) {
   return userElement;
 }
 
+/**
+ *Función para eliminar el usuario de la lista:
+ * 1. Enviar petición DELETE /usere/:id
+ * 2. Comprobar si el código de estado es 200 (éxito)
+ *  2.1 Borrar también el elemento HTML correspondiente: hemos debido poner el _id a cada elemento de lista creado.
+ * @param id Identificador del usario
+ */ function deleteUser(id) {
+  if (confirm("¿Está seguro de que desea eliminar el usuario ?[" + id + "]")) {
+    if (apiDeleteUser(id)) {
+      const userElement = document.getElementById(id);
+      if (userElement) {
+        userElement.remove();
+        alert("Usuario eliminado correctamente");
+      }
+    } else {
+      console.error("Error al eliminar el usuario con id: " + id);
+      alert("Fallo al eliminar el usuario");
+    }
+  }
+}
 /**
  * Tarea 5. Uso de fecth() para obtener los detalles de un usuario.
  * Función para mostrar los detalles del usuario en la interfaz de usuario en un cuadro de diálogo modal
@@ -222,6 +226,10 @@ function showUserDetails(user) {
   document.getElementById("userDetails").innerHTML =
     `${user.name} ${user.surname} <br>Email:${user.email} <br>Id:${user._id}`;
 
+  const inputUserName = document.getElementById("editUser_name");
+  inputUserName.value = user.name;
+  const inputUserId = document.getElementById("editUser_id");
+  inputUserId.value = user._id;
   dialog.showModal();
 }
 
@@ -239,21 +247,49 @@ function closeUserDetails() {
  * @param {String} userId - Id del usuario a eliminar
  * @returns true si se ha eliminado correctamente, false en otro caso
  */
-async function deleteUser(userId) {
+async function apiDeleteUser(userId) {
   const init = {
-    method: "DELETE"
+    method: "DELETE",
   };
-  const response = await fetch(
-    ENDPOINTS.USERS + "/" + userId,
-    init
-  );
+  const response = await fetch(ENDPOINTS.USERS + "/" + userId, init);
   if (response.ok) {
     console.log("Usuario eliminado con id: " + userId);
     return true;
   } else {
     console.error(
-      "Error al eliminar el usuario, código de estado: " + response.status
+      "Error al eliminar el usuario, código de estado: " + response.status,
     );
     return false;
+  }
+}
+
+/**
+ *
+ */
+async function udateUserDetails(event) {
+  event.preventDefault();
+  const userid = event.target.editUser_id.value;
+  //Actualizar el usuario
+  const name = document.getElementById("editUser_name").value;
+
+  const data = {
+    name: name
+  };
+  const init = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+
+  console.log("Actualizando el usuario "+userid);
+  const response = await fetch(ENDPOINTS.USERS + "/" + userid,init);
+
+  if (response.ok) {
+    alert("Usuario actualizado correctamente");
+    closeUserDetails();
+  } else {
+    alert("Error al actualizar:" + response.status);
   }
 }
