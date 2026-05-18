@@ -47,12 +47,16 @@ tan solo muestra ejemplos de cómo realizar peticiones CRUD a un servidor REST c
         </button>
         <ul id="listUsersResult"></ul>
         <dialog id="userDetailsDialog">
-          <h3>Detalles del usuario</h3>
-          <p id="userDetails"></p>
+          <h3 id="editUser_title"></h3>
+          
           <form name="editUser" onsubmit="udateUserDetails(event)">
             <input id="editUser_id" name="editUser_id" type="hidden">
             <label for="editUser_name">Nombre:</label>
-            <input id="editUser_name" type="text" name="editUser_name" />
+            <input id="editUser_name" type="text" name="editUser_name" required />
+            <label for="editUser_password">Clave:</label>
+            <input id="editUser_password" type="password" name="editUser_password" required />
+            <label for="editUser_age">Edad:</label>
+            <input id="editUser_age" type="number" name="editUser_age" />
             <input type="submit" value="Actualizar" />
           </form>
           <button onclick="closeUserDetails()">Cerrar</button>

@@ -88,3 +88,25 @@ li.userListItem {
   display: inline-block;
   font-weight: bold;
 }
+
+dialog input{
+  display: block;
+  padding: 0.5em;
+  border-radius: 0.5em;
+  margin-bottom: 0.5em;
+  width: 90%;
+}
+
+dialog input:invalid{
+  outline: 2px solid red;
+}
+
+dialog{
+  border-style: none;
+  border-radius: 1em;
+  box-shadow: rgba(0, 0, 0, 0.75) 10px 10px 43px 0px
+}
+
+dialog button{
+  float: right;
+}

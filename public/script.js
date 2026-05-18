@@ -223,11 +223,18 @@ function drawUser(user) {
  */
 function showUserDetails(user) {
   const dialog = document.getElementById("userDetailsDialog");
-  document.getElementById("userDetails").innerHTML =
-    `${user.name} ${user.surname} <br>Email:${user.email} <br>Id:${user._id}`;
+  document.getElementById("editUser_title").innerHTML =
+    `Detalles del usuario ${user.name}`;
 
+  //Actualizo los campos del formulario del cuadro de diálogo.
   const inputUserName = document.getElementById("editUser_name");
   inputUserName.value = user.name;
+  const inputUserPass= document.getElementById("editUser_password");
+  inputUserPass.value = user.password;
+  const inputUserAge= document.getElementById("editUser_age");
+  inputUserAge.value = user.age;
+
+  //Campo oculto para almacenar la id del usuario
   const inputUserId = document.getElementById("editUser_id");
   inputUserId.value = user._id;
   dialog.showModal();
@@ -271,9 +278,13 @@ async function udateUserDetails(event) {
   const userid = event.target.editUser_id.value;
   //Actualizar el usuario
   const name = document.getElementById("editUser_name").value;
+  const age = document.getElementById("editUser_age").value;
+  const password = document.getElementById("editUser_password").value;
 
   const data = {
-    name: name
+    name: name,
+    age: age,
+    password: password
   };
   const init = {
     method: "PUT",
